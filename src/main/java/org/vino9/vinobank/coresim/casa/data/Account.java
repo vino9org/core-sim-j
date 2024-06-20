@@ -14,9 +14,9 @@ import java.util.List;
 public class Account {
 
     public enum Status {
-        active("active"),
-        suspended("suspended"),
-        closed("closed");
+        ACTIVE("active"),
+        SUSPENDED("suspended"),
+        CLOSED("closed");
 
         private final String value;
 
@@ -47,7 +47,7 @@ public class Account {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 10, nullable = false)
-    private Status status = Status.active;
+    private Status status = Status.ACTIVE;
 
     @Column(name = "updated_at", nullable = false, updatable = false)
     private LocalDateTime updatedAt;

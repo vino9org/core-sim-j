@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.Optional;
 
 public interface AccountRepository extends JpaRepository<Account, Long>{
-    @Query("SELECT a FROM Account a WHERE a.accountNum = :accountNum and a.status = 'active'")
+    @Query("SELECT a FROM Account a WHERE a.accountNum = :accountNum and a.status = 'ACTIVE'")
     Optional<Account> findByAccountNum(String accountNum);
 }
