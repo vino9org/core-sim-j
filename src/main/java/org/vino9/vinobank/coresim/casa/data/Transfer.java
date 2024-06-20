@@ -1,7 +1,6 @@
 package org.vino9.vinobank.coresim.casa.data;
 import jakarta.persistence.*;
 import lombok.Data;
-import org.springframework.data.annotation.CreatedDate;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -36,7 +35,6 @@ public class Transfer {
     @Column(name = "credit_account_num", length = 32, nullable = false)
     private String creditAccountNum;
 
-    @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 }

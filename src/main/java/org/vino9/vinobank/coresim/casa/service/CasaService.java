@@ -47,7 +47,7 @@ public class CasaService {
         LocalDateTime nowDt = LocalDateTime.now(); // Replace with your _now_dt_ method
 
         if (transfer.getRefId() == null || transfer.getRefId().isEmpty()) {
-            transfer.setRefId(generateRefId()); // Replace with your ulid.new() equivalent
+            transfer.setRefId( ulid.nextULID());
         }
 
         Account debitAccount = accountRepository.findByAccountNum(transfer.getDebitAccountNum())
@@ -102,10 +102,5 @@ public class CasaService {
         transferRepository.save(transferObj);
 
         return mapper.map(transferObj, TransferSchema.class);
-    }
-
-    private String generateRefId() {
-        // Implement your ulid.new() equivalent here
-        return ulid.nextULID();
     }
 }

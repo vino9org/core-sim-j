@@ -2,7 +2,6 @@ package org.vino9.vinobank.coresim.casa.data;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import org.springframework.data.annotation.CreatedDate;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -50,7 +49,6 @@ public class Account {
     @Column(name = "status", length = 10, nullable = false)
     private Status status = Status.active;
 
-    @CreatedDate
     @Column(name = "updated_at", nullable = false, updatable = false)
     private LocalDateTime updatedAt;
 
