@@ -1,9 +1,8 @@
 package org.vino9.vinobank.coresim.casa.api;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 import org.vino9.vinobank.coresim.casa.service.CasaService;
 
 @RestController
@@ -19,5 +18,11 @@ public class CasaController {
     @GetMapping("accounts/{account_num}")
     public AccountSchema getAccountDetail(@PathVariable("account_num") String accountNum) {
         return service.getAccountDetail(accountNum);
+    }
+
+    @PostMapping("transfers")
+    @ResponseStatus(HttpStatus.CREATED)
+    public TransferSchema transfer(@RequestBody @Valid TransferSchema transferSchema) {
+        return service.transfer(transferSchema);
     }
 }

@@ -2,9 +2,9 @@ spring:
   application:
     name: core-sim-j
   datasource:
-    url: jdbc:postgresql://localhost:5432/vinocore
-    username: vinocore
-    password: vinocore
+    url: jdbc:postgresql://${PG_HOST:localhost}:5432/vinocore
+    username: ${PG_USERNAME:vinocore}
+    password: ${PG_PASSWORD:vinocore}
   jpa:
     hibernate:
       ddl-auto: validate
