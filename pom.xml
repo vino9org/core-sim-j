@@ -45,7 +45,11 @@
 			<artifactId>de.huxhorn.sulky.ulid</artifactId>
 			<version>${ulid.version}</version>
 		</dependency>
-
+<!--        <dependency>-->
+<!--            <groupId>com.github.gavlyukovskiy</groupId>-->
+<!--            <artifactId>p6spy-spring-boot-starter</artifactId>-->
+<!--            <version>1.9.1</version>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>

@@ -50,17 +50,23 @@ public class CasaService {
             transfer.setRefId( ulid.nextULID());
         }
 
-        Account debitAccount = accountRepository.findByAccountNum(transfer.getDebitAccountNum())
-                .orElseThrow(() -> new ValidationException("Invalid debit account"));
+        var accounts = accountRepository.findByAccountsForTransfer(transfer.getDebitAccountNum(), transfer.getCreditAccountNum());
+        if (accounts.size() != 2) {
+            throw new ValidationException("Invalid debit or credit account");
+        }
+
+        var debitAccount = accounts.get(0);
+        var creditAccount = accounts.get(1);
+
+        if (debitAccount.getAccountNum().equals(transfer.getCreditAccountNum())) {
+            debitAccount = accounts.get(1);
+            creditAccount = accounts.get(0);
+        }
 
         var transferAmount = BigDecimal.valueOf(transfer.getAmount());
-
         if (debitAccount.getAvailBalance().compareTo(transferAmount) < 0) {
             throw new ValidationException("Insufficient funds in debit account");
         }
-
-        Account creditAccount = accountRepository.findByAccountNum(transfer.getCreditAccountNum())
-                .orElseThrow(() -> new ValidationException("Invalid credit account"));
 
         debitAccount.setAvailBalance(debitAccount.getAvailBalance().subtract(transferAmount));
         debitAccount.setBalance(debitAccount.getBalance().subtract(transferAmount));
