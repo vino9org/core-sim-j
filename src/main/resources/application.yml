@@ -2,7 +2,7 @@ spring:
   application:
     name: core-sim-j
   datasource:
-    url: jdbc:postgresql://${PG_HOST:localhost}:5432/vinocore
+    url: jdbc:postgresql://${PG_HOST:localhost}:5432/vino3
     username: ${PG_USERNAME:vinocore}
     password: ${PG_PASSWORD:vinocore}
     hikari:

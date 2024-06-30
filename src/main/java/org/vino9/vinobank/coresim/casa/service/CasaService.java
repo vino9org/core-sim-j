@@ -2,18 +2,18 @@ package org.vino9.vinobank.coresim.casa.service;
 
 import de.huxhorn.sulky.ulid.ULID;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.vino9.vinobank.coresim.casa.api.AccountSchema;
+import org.vino9.vinobank.coresim.casa.api.TransferRequestSchema;
 import org.vino9.vinobank.coresim.casa.api.TransferSchema;
 import org.vino9.vinobank.coresim.casa.data.*;
 import org.vino9.vinobank.coresim.exception.NotFoundException;
 import org.vino9.vinobank.coresim.exception.ValidationException;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-
 @Service
+@Slf4j
 public class CasaService {
 
     private final AccountRepository accountRepository;
@@ -43,12 +43,9 @@ public class CasaService {
 
 
     @Transactional
-    public TransferSchema transfer(TransferSchema transfer) throws ValidationException {
-        LocalDateTime nowDt = LocalDateTime.now(); // Replace with your _now_dt_ method
-
-        if (transfer.getRefId() == null || transfer.getRefId().isEmpty()) {
-            transfer.setRefId( ulid.nextULID());
-        }
+    public TransferSchema transfer(TransferRequestSchema transfer) throws ValidationException {
+        String trxId = ulid.nextULID();
+        String refId = transfer.getRefId();
 
         var accounts = accountRepository.findByAccountsForTransfer(transfer.getDebitAccountNum(), transfer.getCreditAccountNum());
         if (accounts.size() != 2) {
@@ -63,7 +60,7 @@ public class CasaService {
             creditAccount = accounts.get(0);
         }
 
-        var transferAmount = BigDecimal.valueOf(transfer.getAmount());
+        var transferAmount = transfer.getAmount();
         if (debitAccount.getAvailBalance().compareTo(transferAmount) < 0) {
             throw new ValidationException("Insufficient funds in debit account");
         }
@@ -73,13 +70,14 @@ public class CasaService {
         accountRepository.save(debitAccount);
 
         Transaction debitTransaction = new Transaction();
-        debitTransaction.setRefId(transfer.getRefId());
+        debitTransaction.setRefId(refId);
+        debitTransaction.setTrxId(trxId);
         debitTransaction.setTrxDate(transfer.getTrxDate());
         debitTransaction.setCurrency(transfer.getCurrency());
         debitTransaction.setAmount(transferAmount.negate());
         debitTransaction.setMemo(transfer.getMemo());
+        debitTransaction.setRunningBalance(debitAccount.getBalance());
         debitTransaction.setAccount(debitAccount);
-        debitTransaction.setCreatedAt(nowDt);
         transactionRepository.save(debitTransaction);
 
         creditAccount.setAvailBalance(creditAccount.getAvailBalance().add(transferAmount));
@@ -87,26 +85,28 @@ public class CasaService {
         accountRepository.save(creditAccount);
 
         Transaction creditTransaction = new Transaction();
-        creditTransaction.setRefId(transfer.getRefId());
+        creditTransaction.setRefId(refId);
+        creditTransaction.setTrxId(trxId);
         creditTransaction.setTrxDate(transfer.getTrxDate());
         creditTransaction.setCurrency(transfer.getCurrency());
         creditTransaction.setAmount(transferAmount);
         creditTransaction.setMemo("from " + transfer.getDebitAccountNum() + ": " + transfer.getMemo());
+        creditTransaction.setRunningBalance(creditAccount.getBalance());
         creditTransaction.setAccount(creditAccount);
-        creditTransaction.setCreatedAt(nowDt);
         transactionRepository.save(creditTransaction);
 
         Transfer transferObj = new Transfer();
-        transferObj.setRefId(transfer.getRefId());
+        transferObj.setRefId(refId);
+        transferObj.setTrxId(trxId);
         transferObj.setTrxDate(transfer.getTrxDate());
         transferObj.setCurrency(transfer.getCurrency());
         transferObj.setAmount(transferAmount);
         transferObj.setMemo(transfer.getMemo());
         transferObj.setDebitAccountNum(transfer.getDebitAccountNum());
         transferObj.setCreditAccountNum(transfer.getCreditAccountNum());
-        transferObj.setCreatedAt(nowDt);
         transferRepository.save(transferObj);
 
+        log.info("Create transfer for ref_id {} of amount {}", refId, transferAmount);
         return mapper.map(transferObj, TransferSchema.class);
     }
 }

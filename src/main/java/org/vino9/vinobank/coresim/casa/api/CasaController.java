@@ -22,7 +22,7 @@ public class CasaController {
 
     @PostMapping("transfers")
     @ResponseStatus(HttpStatus.CREATED)
-    public TransferSchema transfer(@RequestBody @Valid TransferSchema transferSchema) {
-        return service.transfer(transferSchema);
+    public TransferSchema transfer(@RequestBody @Valid TransferRequestSchema transferRequest) {
+        return service.transfer(transferRequest);
     }
 }

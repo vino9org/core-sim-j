@@ -1,7 +1,5 @@
 package org.vino9.vinobank.coresim.casa.api;
 
-
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
@@ -10,15 +8,17 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 @Setter
-public class TransferSchema {
+public class TransferRequestSchema {
 
     @JsonProperty("ref_id")
     private String refId;
+
+    @JsonProperty("trx_id")
+    private String trxId;
 
     @NotBlank
     @JsonProperty("trx_date")
@@ -44,7 +44,4 @@ public class TransferSchema {
     @JsonProperty("memo")
     private String memo;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    @JsonProperty("created_at")
-    private LocalDateTime createdAt;
 }

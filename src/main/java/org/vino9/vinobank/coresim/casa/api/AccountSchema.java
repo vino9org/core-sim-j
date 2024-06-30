@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -25,11 +26,11 @@ public class AccountSchema {
 
     @NotNull
     @JsonProperty("balance")
-    private Double balance;
+    private BigDecimal balance;
 
     @NotNull
     @JsonProperty("avail_balance")
-    private Double availBalance;
+    private BigDecimal availBalance;
 
     @NotBlank
     @JsonProperty("status")
